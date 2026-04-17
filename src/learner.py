@@ -5,6 +5,9 @@ import torch.optim as optim
 from torch.utils.data import DataLoader, TensorDataset
 from tqdm import tqdm
 
+from network import FactorGraphNetwork
+from noise_generator import IndependentMarginals
+
 
 def one_hot_encode(data: np.ndarray, alphabet_size: int) -> np.ndarray:
     """

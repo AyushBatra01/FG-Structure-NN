@@ -1,6 +1,8 @@
 import numpy as np
 import networkx as nx
 
+from true_graph import TrueGraph
+
 
 def random_potential_table(alphabet_size, rng, size=2, strength=1.0, symmetric=False):
     log_table = rng.normal(0.0, strength, size=tuple([alphabet_size]*size))
