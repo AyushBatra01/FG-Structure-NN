@@ -129,11 +129,9 @@ class FactorGraphNetwork(nn.Module):
         # Message passing penalty
         soft_masks = self.soft_masks()
         soft_weights = self.soft_weights()
-        # sizes = masks.sum(dim=1)
         sizes = soft_masks.sum(dim=1)
         log_q = np.log(self.alphabet_size) # for stability
         msg_cost = torch.exp(log_q * sizes)
-        # msg_penalty = (weights * sizes * msg_cost).mean()
         msg_penalty = (soft_weights * sizes * msg_cost).mean()
         return lambda_mask * mask_reg + lambda_weight * weight_reg + lambda_mlp_l2 * mlp_l2 + lambda_bp * msg_penalty
 

@@ -3,6 +3,7 @@ import itertools
 import matplotlib.pyplot as plt
 
 from true_graph import TrueGraph
+from learner import FactorGraphLearner
 
 
 def get_scopes(obj, mask_thresh=0.5, weight_thresh=0.5):
@@ -134,6 +135,19 @@ def structural_hamming_distance(obj1, obj2):
     edges1 = scopes_to_edges(get_scopes(obj1))
     edges2 = scopes_to_edges(get_scopes(obj2))
     return len(edges1.symmetric_difference(edges2))
+
+
+def graph_density(obj):
+    if hasattr(obj, "n"):
+        n = obj.n
+    elif hasattr(obj, "network"):
+        n = obj.network.n_vars
+    else:
+        raise ValueError("incorrect object type")
+    scope = get_scopes(obj)
+    edges = scopes_to_edges(scope)
+    return len(edges) / (n - 1)
+        
 
 
 def prob_diff_hist(obj1, obj2):
