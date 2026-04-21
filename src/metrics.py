@@ -1,7 +1,8 @@
 import numpy as np
 import itertools
-
 import matplotlib.pyplot as plt
+
+from true_graph import TrueGraph
 
 
 def get_scopes(obj, mask_thresh=0.5, weight_thresh=0.5):
@@ -176,6 +177,9 @@ def kl_divergence_mle(graph, samples, alpha=0.1):
 
 def kl_mle_optimal(graph, samples):
     best = 999999
-    for alpha in [0.001,0.01,0.05,0.1,0.5,1.0,2.0,10.0]:
-        best = min(best, kl_divergence_mle(graph, samples, alpha))
+    for log_a in np.arange(-4,4.01,0.5):
+        a = 10**log_a
+        best = min(best, kl_divergence_mle(graph, samples, a))
     return best
+
+

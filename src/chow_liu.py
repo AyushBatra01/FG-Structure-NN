@@ -1,5 +1,6 @@
 import numpy as np
 from true_graph import TrueGraph
+from random_graph import make_factor
 
 
 # Copied from Chow-Liu project
