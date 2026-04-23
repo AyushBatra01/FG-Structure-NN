@@ -5,6 +5,7 @@ import torch.optim as optim
 from torch.utils.data import DataLoader, TensorDataset
 from tqdm import tqdm
 
+from true_graph import TrueGraph
 from network import FactorGraphNetwork
 from noise_generator import IndependentMarginals
 
@@ -33,6 +34,13 @@ def to_network_input(data: np.ndarray, one_hot: bool, alphabet_size: int) -> tor
     else:
         arr = data.astype(np.float32)
     return torch.tensor(arr, dtype=torch.float32)
+
+def learner_to_graph(lrn):
+    fscopes = lrn.extract_graph()['factor_scopes']
+    def h(): return 1
+    factors = [(f, h) for f in fscopes.values()]
+    g = TrueGraph(n=lrn.network.n_vars, factors=factors)
+    return g
 
 
 
@@ -130,16 +138,16 @@ class FactorGraphLearner:
             diagnostics["n_active_factors"].append(n_active_factors)
         return losses, diagnostics
 
-    def extract_graph(self, mask_thresh=0.5, weight_thresh=0.5):
+    def extract_graph(self):
         self.network.eval()
         masks = self.network.masks().detach().cpu().numpy()  
         weights = self.network.weights().detach().cpu().numpy()  
         self.network.train()
         active = [
-            k for k in range(self.network.K) if weights[k] > weight_thresh and np.any(masks[k] > mask_thresh)
+            k for k in range(self.network.K) if weights[k] > 0.5 and np.any(masks[k] > 0.5)
         ]
         scopes = {
-            k: [i for i in range(self.network.n_vars) if masks[k, i] > mask_thresh] for k in active
+            k: [i for i in range(self.network.n_vars) if masks[k, i] > 0.5] for k in active
         }
         return {
             "active_factors": active,

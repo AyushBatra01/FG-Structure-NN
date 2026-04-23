@@ -3,10 +3,10 @@ import itertools
 import matplotlib.pyplot as plt
 
 from true_graph import TrueGraph
-from learner import FactorGraphLearner
+from learner import FactorGraphLearner, to_network_input
 
 
-def get_scopes(obj, mask_thresh=0.5, weight_thresh=0.5):
+def get_scopes(obj):
     """Extract factor scopes from either TrueGraph or learner."""
     # TrueGraph
     if hasattr(obj, "factors"):
@@ -14,8 +14,7 @@ def get_scopes(obj, mask_thresh=0.5, weight_thresh=0.5):
 
     # Neural network learner
     elif hasattr(obj, "extract_graph"):
-        recovered = obj.extract_graph(mask_thresh=mask_thresh,
-                                      weight_thresh=weight_thresh)
+        recovered = obj.extract_graph()
         return [set(v) for v in recovered["factor_scopes"].values()]
 
     else:
